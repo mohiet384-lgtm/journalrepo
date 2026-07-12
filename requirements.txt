@@ -1,0 +1,9 @@
+# Minimal deps for the Streamlit dashboard ONLY (src/dashboard/app.py).
+# Streamlit Community Cloud installs this file — keep it light so deploys
+# are fast and don't break on packages the dashboard doesn't even import.
+# For the full research pipeline (causal discovery, DoWhy, SHAP, RL),
+# use requirements-full.txt on your own machine instead.
+
+streamlit>=1.35
+pandas>=2.0
+plotly>=5.20

@@ -1,0 +1,51 @@
+# sources.yaml — machine-readable source registry
+#
+# STATUS: TEMPLATE. Each entry's `url` and `verified` fields must be filled
+# in by hand after a human confirms the source is live and matches the
+# described dataset. Scripts in this folder REFUSE to run against an
+# entry where `verified: false` (see fetch_indicator.py).
+#
+# Fields:
+#   id           - matches indicator_schema.md row number
+#   name         - short indicator name
+#   source_name  - institution/portal
+#   url          - exact dataset/API/report URL (fill after manual check)
+#   access_type  - api | bulk_download | manual_pdf | scrape
+#   granularity  - state_year | national_year | state (time-invariant)
+#   verified     - true only after a human has opened the URL and confirmed it
+
+indicators:
+  - id: 4
+    name: gender_parity_education
+    source_name: UDISE+ (Dept. of School Education & Literacy)
+    url: ""            # fill in after manual verification
+    access_type: bulk_download
+    granularity: state_year
+    verified: false
+
+  - id: 5
+    name: rural_urban_digital_divide
+    source_name: NSS / MoSPI
+    url: ""
+    access_type: manual_pdf
+    granularity: state
+    verified: false
+
+  - id: 14
+    name: ai_patent_filings
+    source_name: IP India (Indian Patent Office)
+    url: "https://ipindiaservices.gov.in/PublicSearch/"
+    access_type: scrape
+    granularity: state_year
+    verified: false
+
+  - id: 16
+    name: ai_research_output
+    source_name: OpenAlex API
+    url: "https://api.openalex.org/works"
+    access_type: api
+    granularity: state_year
+    verified: false
+
+# Add remaining rows from docs/indicator_schema.md as they are verified.
+# DO NOT set verified: true without opening the URL yourself.
