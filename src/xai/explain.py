@@ -16,6 +16,10 @@ Two paths:
 from __future__ import annotations
 import numpy as np
 import pandas as pd
+import matplotlib
+import shap
+import graphviz
+import pydot
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.inspection import permutation_importance
 
