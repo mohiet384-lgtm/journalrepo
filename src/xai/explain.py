@@ -7,19 +7,21 @@ Section IV of the paper — currently text-only, no figure).
 Two paths:
   1. `permutation_importance_minimal()` — sklearn permutation importance,
      a reasonable stand-in for global attribution. TESTED in this sandbox.
+     Only needs numpy/pandas/scikit-learn.
   2. `run_shap_production()` — real SHAP (TreeExplainer/KernelExplainer)
      for per-state, per-dimension local attributions, matching what the
      paper claims ("every ICAID score auditable at the individual
      [state] level"). Requires `pip install shap` on a machine with
      internet access.
+
+NOTE: shap/graphviz/pydot/matplotlib are imported lazily (inside the
+functions/blocks that actually use them) rather than at module level.
+That way `permutation_importance_minimal()` can be imported and used even
+in environments where those heavier, optional packages aren't installed.
 """
 from __future__ import annotations
 import numpy as np
 import pandas as pd
-import matplotlib
-import shap
-import graphviz
-import pydot
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.inspection import permutation_importance
 
@@ -58,6 +60,9 @@ def run_shap_production(model, X: pd.DataFrame):
 
 
 if __name__ == "__main__":
+    # matplotlib is only needed here (figure generation), so it's imported
+    # locally, and the "Agg" backend is set BEFORE pyplot is imported —
+    # required for headless environments (servers, CI, Streamlit Cloud).
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
