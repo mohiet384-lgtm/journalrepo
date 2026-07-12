@@ -10,3 +10,5 @@ pillow
 pyarrow
 graphviz
 pydot
+shap
+lime
