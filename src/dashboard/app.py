@@ -9,14 +9,22 @@ produced once Month 1 data collection is done. Until then it falls back
 to the synthetic panel and shows a clear on-screen warning banner.)
 """
 import os
+from pathlib import Path
 import pandas as pd
 import streamlit as st
 import plotly.express as px
 
 st.set_page_config(page_title="ICAID Dashboard", layout="wide")
 
-REAL_PATH = "../../data/processed/icaid_real_panel.csv"
-SYNTH_PATH = "../../data/synthetic/icaid_synthetic_panel.csv"
+# Anchor all paths to this file's own location (not the current working
+# directory). Locally, `cd src/dashboard && streamlit run app.py` sets cwd
+# to src/dashboard, so "../../data/..." works. But on Streamlit Cloud, cwd
+# is ALWAYS the repo root regardless of where app.py lives, so a relative
+# path like "../../data/..." resolves outside the repo -> FileNotFoundError.
+# Using __file__ makes this work the same way in both environments.
+BASE_DIR = Path(__file__).resolve().parent
+REAL_PATH = BASE_DIR / "../../data/processed/icaid_real_panel.csv"
+SYNTH_PATH = BASE_DIR / "../../data/synthetic/icaid_synthetic_panel.csv"
 DIMS = ["CE", "DF", "CA", "SI", "IR", "IP"]
 
 st.title("ICAID — India-Centric AI Development Index")
@@ -44,7 +52,7 @@ year_df = df[df["year"] == year].sort_values(dim, ascending=False)
 with col2:
     fig = px.bar(year_df, x="state", y=dim, title=f"{dim} by state — {year}")
     fig.update_layout(xaxis_tickangle=-45)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 st.subheader("Ranking table")
 st.dataframe(year_df[["state"] + DIMS + ["ICAID_score"]].reset_index(drop=True))
@@ -55,17 +63,17 @@ state_pick = st.multiselect("Compare states", sorted(df["state"].unique()),
 if state_pick:
     trend_df = df[df["state"].isin(state_pick)]
     fig2 = px.line(trend_df, x="year", y="ICAID_score", color="state", markers=True)
-    st.plotly_chart(fig2, use_container_width=True)
+    st.plotly_chart(fig2, width='stretch')
 
 st.subheader("Dimension attribution (explainability)")
-ATTRIBUTION_FIG_PATH = "../../results/figures/attribution_smoketest.png"
+ATTRIBUTION_FIG_PATH = BASE_DIR / "../../results/figures/attribution_smoketest.png"
 if os.path.exists(ATTRIBUTION_FIG_PATH):
     st.image(
         ATTRIBUTION_FIG_PATH,
         caption="Permutation importance — stand-in for mean |SHAP value| "
                 "(SYNTHETIC smoke test, not for the paper until real SHAP "
                 "is run on real data).",
-        use_container_width=True,
+        width='stretch',
     )
 else:
     st.info(
